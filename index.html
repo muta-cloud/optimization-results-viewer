@@ -168,18 +168,6 @@
       background: #f8faf9;
     }
 
-    .nav-section + .nav-section {
-      margin-top: 22px;
-    }
-
-    .nav-heading {
-      margin: 0 8px 7px;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 700;
-      line-height: 1.4;
-    }
-
     .graph-button {
       position: relative;
       width: 100%;
@@ -385,60 +373,44 @@
   </main>
 
   <script>
-    const graphGroups = [
+    const graphs = [
       {
-        label: "基本比較",
-        items: [
-          {
-            id: "all-methods",
-            title: "3手法比較",
-            file: "graphs/all-methods.html"
-          },
-          {
-            id: "magnet-constraint",
-            title: "磁石量制約あり",
-            file: "graphs/magnet-constraint.html"
-          }
-        ]
+        id: "all-methods",
+        title: "3手法比較",
+        file: "graphs/all-methods.html"
       },
       {
-        label: "制約条件比較",
-        items: [
-          {
-            id: "magnet-torque-constraint",
-            title: "磁石量・トルク制約あり",
-            file: "graphs/magnet-torque-constraint.html"
-          },
-          {
-            id: "feasible-only",
-            title: "制約満足のみ",
-            file: "graphs/feasible-only.html"
-          }
-        ]
+        id: "magnet-constraint",
+        title: "磁石量制約あり",
+        file: "graphs/magnet-constraint.html"
       },
       {
-        label: "シード値比較",
-        items: [
-          {
-            id: "seed-6",
-            title: "シード値6",
-            file: "graphs/seed-6.html"
-          },
-          {
-            id: "seed-7",
-            title: "シード値7",
-            file: "graphs/seed-7.html"
-          },
-          {
-            id: "seed-8",
-            title: "シード値8",
-            file: "graphs/seed-8.html"
-          }
-        ]
+        id: "magnet-torque-constraint",
+        title: "磁石量・トルク制約あり",
+        file: "graphs/magnet-torque-constraint.html"
+      },
+      {
+        id: "feasible-only",
+        title: "制約満足のみ",
+        file: "graphs/feasible-only.html"
+      },
+      {
+        id: "seed-6",
+        title: "シード値6",
+        file: "graphs/seed-6.html"
+      },
+      {
+        id: "seed-7",
+        title: "シード値7",
+        file: "graphs/seed-7.html"
+      },
+      {
+        id: "seed-8",
+        title: "シード値8",
+        file: "graphs/seed-8.html"
       }
     ];
 
-    const graphs = graphGroups.flatMap((group) => group.items);
     const graphById = new Map(graphs.map((graph) => [graph.id, graph]));
     const sidebar = document.getElementById("sidebar");
     const picker = document.getElementById("mobile-picker");
@@ -450,35 +422,19 @@
     const fullscreenButton = document.getElementById("fullscreen-button");
 
     function buildNavigation() {
-      graphGroups.forEach((group) => {
-        const section = document.createElement("section");
-        section.className = "nav-section";
+      graphs.forEach((graph) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "graph-button";
+        button.dataset.graphId = graph.id;
+        button.innerHTML = `<strong>${graph.title}</strong>`;
+        button.addEventListener("click", () => selectGraph(graph.id));
+        sidebar.appendChild(button);
 
-        const heading = document.createElement("h2");
-        heading.className = "nav-heading";
-        heading.textContent = group.label;
-        section.appendChild(heading);
-
-        const optionGroup = document.createElement("optgroup");
-        optionGroup.label = group.label;
-
-        group.items.forEach((graph) => {
-          const button = document.createElement("button");
-          button.type = "button";
-          button.className = "graph-button";
-          button.dataset.graphId = graph.id;
-          button.innerHTML = `<strong>${graph.title}</strong>`;
-          button.addEventListener("click", () => selectGraph(graph.id));
-          section.appendChild(button);
-
-          const option = document.createElement("option");
-          option.value = graph.id;
-          option.textContent = graph.title;
-          optionGroup.appendChild(option);
-        });
-
-        sidebar.appendChild(section);
-        picker.appendChild(optionGroup);
+        const option = document.createElement("option");
+        option.value = graph.id;
+        option.textContent = graph.title;
+        picker.appendChild(option);
       });
     }
 
